@@ -100,7 +100,41 @@ const loginController = async (req, res) => {
   }
 };
 
+const authController = async (req, res) => {
+  try {
+    const user = await userModel.findOne({
+      where: {
+        id: req.body.userId,
+      },
+    });
+
+    if (!user) {
+      return res.status(200).send({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    res.status(200).send({
+      success: true,
+      data: {
+        name: user.name,
+        email: user.email,
+        created_at: user.created_at,
+        profile_image: user.profile_image,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: `Internal Server Error ${error.message}`,
+    });
+  }
+};
+
 module.exports = {
   loginController,
   registerController,
+  authController,
 };
