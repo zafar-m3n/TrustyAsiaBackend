@@ -27,17 +27,21 @@ const registerController = async (req, res) => {
       password: hashedPassword,
     });
 
+    const token = jwt.sign({ id: newUser.id }, process.env.NODE_TRUSTYASIA_JWT_SECRET, { expiresIn: "1d" });
+
     const userResponse = {
       id: newUser.id,
       name: newUser.name,
       email: newUser.email,
       created_at: newUser.created_at,
+      profile_image: newUser.profile_image,
     };
 
     res.status(201).send({
       success: true,
       message: "Registered Successfully",
-      data: userResponse,
+      token: token,
+      user: userResponse,
     });
   } catch (error) {
     console.log(error);
@@ -79,6 +83,13 @@ const loginController = async (req, res) => {
       success: true,
       message: "Login Successful",
       token: token,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        created_at: user.created_at,
+        profile_image: user.profile_image,
+      },
     });
   } catch (error) {
     console.log(error);

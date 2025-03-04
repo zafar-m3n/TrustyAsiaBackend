@@ -22,6 +22,10 @@ const User = sequelize.define(
       type: DataTypes.STRING(255),
       allowNull: true,
     },
+    profile_image: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
     google_id: {
       type: DataTypes.STRING(255),
       allowNull: true,
