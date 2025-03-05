@@ -30,6 +30,22 @@ const Business = sequelize.define(
       type: DataTypes.STRING(150),
       allowNull: true,
     },
+    logo_url: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
+    website_url: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
+    rating: {
+      type: DataTypes.DECIMAL(2, 1),
+      defaultValue: 0.0,
+    },
+    review_count: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+    },
     created_at: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
