@@ -5,9 +5,10 @@ const Category = require("../models/CategoryModel");
 // Get all businesses with search, filter, and pagination
 const getBusinessesController = async (req, res) => {
   try {
-    const { search, category_id, location, page = 1, limit = 10 } = req.query;
+    const { search, category_id, location, minRating, page = 1, limit = 10 } = req.query;
 
     const where = {};
+
     if (search) {
       where.name = { [Op.like]: `%${search}%` };
     }
@@ -16,6 +17,9 @@ const getBusinessesController = async (req, res) => {
     }
     if (location) {
       where.location = { [Op.like]: `%${location}%` };
+    }
+    if (minRating) {
+      where.rating = { [Op.gte]: parseFloat(minRating) };
     }
 
     const offset = (page - 1) * limit;
