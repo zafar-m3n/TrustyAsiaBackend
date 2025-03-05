@@ -21,6 +21,7 @@ app.use(cors());
 
 // Routes
 app.use("/api/v1/auth", require("./routes/authRoutes"));
+app.use("/api/v1/businesses", require("./routes/businessRoutes"));
 
 // Routes
 app.get("/", (req, res) => {
