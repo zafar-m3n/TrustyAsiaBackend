@@ -11,6 +11,9 @@ dotenv.config();
 // Connect Database
 connectDB();
 
+// Load Associations
+require("./models/associateModels");
+
 // Rest Object
 const app = express();
 
@@ -22,6 +25,7 @@ app.use(cors());
 // Routes
 app.use("/api/v1/auth", require("./routes/authRoutes"));
 app.use("/api/v1/businesses", require("./routes/businessRoutes"));
+app.use("/api/v1/reviews", require("./routes/reviewRoutes"));
 
 // Routes
 app.get("/", (req, res) => {
