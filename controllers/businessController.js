@@ -100,28 +100,19 @@ const getBusinessByIdController = async (req, res) => {
 // Get business by website
 const getBusinessByWebsiteController = async (req, res) => {
   try {
-    const { website_url } = req.query;
+    const rawWebsite = req.params.website;
+    let formattedWebsite = rawWebsite.startsWith("http") ? rawWebsite : `https://${rawWebsite}`;
 
-    if (!website_url) {
-      return res.status(400).send({
-        success: false,
-        message: "Website URL is required.",
-      });
-    }
-
-    // Search with a LIKE query to match URLs containing the provided part
     const business = await Business.findOne({
       where: {
-        website_url: {
-          [Op.like]: `%${website_url}%`,
-        },
+        website_url: formattedWebsite,
       },
     });
 
     if (!business) {
       return res.status(404).send({
         success: false,
-        message: "No business found with the provided website URL.",
+        message: "Business not found",
       });
     }
 
@@ -130,10 +121,10 @@ const getBusinessByWebsiteController = async (req, res) => {
       data: business,
     });
   } catch (error) {
-    console.error("Error fetching business by website URL:", error);
+    console.error(error);
     res.status(500).send({
       success: false,
-      message: `Server Error: ${error.message}`,
+      message: `Error fetching business: ${error.message}`,
     });
   }
 };

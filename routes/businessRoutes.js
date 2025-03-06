@@ -10,7 +10,7 @@ const {
 
 router.get("/businesses", getBusinessesController);
 router.get("/businesses/:id", getBusinessByIdController);
-router.get("/business/:website", getBusinessByWebsiteController);
+router.get("/business/website/:website", getBusinessByWebsiteController);
 router.get("/categories", getCategoriesController);
 
 module.exports = router;
