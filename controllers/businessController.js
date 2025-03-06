@@ -11,7 +11,7 @@ const getBusinessesController = async (req, res) => {
       location,
       minRating,
       sortBy = "created_at",
-      sortOrder = "DESC", 
+      sortOrder = "DESC",
       page = 1,
       limit = 10,
     } = req.query;
@@ -97,6 +97,47 @@ const getBusinessByIdController = async (req, res) => {
   }
 };
 
+// Get business by website
+const getBusinessByWebsiteController = async (req, res) => {
+  try {
+    const { website_url } = req.query;
+
+    if (!website_url) {
+      return res.status(400).send({
+        success: false,
+        message: "Website URL is required.",
+      });
+    }
+
+    // Search with a LIKE query to match URLs containing the provided part
+    const business = await Business.findOne({
+      where: {
+        website_url: {
+          [Op.like]: `%${website_url}%`,
+        },
+      },
+    });
+
+    if (!business) {
+      return res.status(404).send({
+        success: false,
+        message: "No business found with the provided website URL.",
+      });
+    }
+
+    res.status(200).send({
+      success: true,
+      data: business,
+    });
+  } catch (error) {
+    console.error("Error fetching business by website URL:", error);
+    res.status(500).send({
+      success: false,
+      message: `Server Error: ${error.message}`,
+    });
+  }
+};
+
 // Get all categories
 const getCategoriesController = async (req, res) => {
   try {
@@ -118,5 +159,6 @@ const getCategoriesController = async (req, res) => {
 module.exports = {
   getBusinessesController,
   getBusinessByIdController,
+  getBusinessByWebsiteController,
   getCategoriesController,
 };
