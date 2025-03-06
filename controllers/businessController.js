@@ -1,6 +1,7 @@
-const { Op } = require("sequelize");
+const { Op, fn, col } = require("sequelize");
 const Business = require("../models/BusinessModel");
 const Category = require("../models/CategoryModel");
+const Review = require("../models/ReviewModel");
 
 // Get all businesses with search, filter, and pagination
 const getBusinessesController = async (req, res) => {
@@ -73,6 +74,7 @@ const getBusinessByIdController = async (req, res) => {
   try {
     const { id } = req.params;
 
+    // Fetch the business details
     const business = await Business.findByPk(id, {
       include: [{ model: Category, attributes: ["name"] }],
     });
@@ -84,9 +86,26 @@ const getBusinessByIdController = async (req, res) => {
       });
     }
 
+    // Fetch ratings breakdown
+    const ratings = await Review.findAll({
+      where: { business_id: id },
+      attributes: ["rating", [fn("COUNT", col("rating")), "count"]],
+      group: ["rating"],
+      raw: true,
+    });
+
+    // Convert breakdown into a more usable object
+    const ratingsBreakdown = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+    ratings.forEach((r) => {
+      ratingsBreakdown[r.rating] = parseInt(r.count);
+    });
+
     res.status(200).send({
       success: true,
-      data: business,
+      data: {
+        ...business.toJSON(),
+        ratings_breakdown: ratingsBreakdown,
+      },
     });
   } catch (error) {
     console.error(error);

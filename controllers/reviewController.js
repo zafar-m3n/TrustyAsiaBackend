@@ -19,14 +19,13 @@ const createReviewController = async (req, res) => {
 
     // Create the review
     const review = await Review.create({
-      user_id: req.user.id,
+      user_id: req.body.userId,
       business_id,
       rating,
       title,
       content,
     });
 
-    // Update business rating and review count
     const reviews = await Review.findAll({ where: { business_id } });
     const avgRating = (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1);
 
@@ -46,15 +45,25 @@ const createReviewController = async (req, res) => {
 const getBusinessReviewsController = async (req, res) => {
   try {
     const { businessId } = req.params;
-    const { page = 1, limit = 10 } = req.query;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+
+    if (!businessId) {
+      return res.status(400).json({ success: false, message: "Business ID is required." });
+    }
 
     const offset = (page - 1) * limit;
 
     const { count, rows } = await Review.findAndCountAll({
       where: { business_id: businessId },
-      include: [{ model: User, attributes: ["id", "name", "profile_image"] }],
-      limit: parseInt(limit),
-      offset: parseInt(offset),
+      include: [
+        {
+          model: User,
+          attributes: ["id", "name", "profile_image"],
+        },
+      ],
+      limit,
+      offset,
       order: [["created_at", "DESC"]],
     });
 
@@ -63,11 +72,14 @@ const getBusinessReviewsController = async (req, res) => {
       data: rows,
       totalItems: count,
       totalPages: Math.ceil(count / limit),
-      currentPage: parseInt(page),
+      currentPage: page,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, message: "Error fetching business reviews." });
+    res.status(500).json({
+      success: false,
+      message: `Error fetching business reviews: ${error.message}`,
+    });
   }
 };
 
