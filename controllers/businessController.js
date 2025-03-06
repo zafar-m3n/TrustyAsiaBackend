@@ -5,22 +5,42 @@ const Category = require("../models/CategoryModel");
 // Get all businesses with search, filter, and pagination
 const getBusinessesController = async (req, res) => {
   try {
-    const { search, category_id, location, minRating, page = 1, limit = 10 } = req.query;
+    const {
+      search,
+      category_id,
+      location,
+      minRating,
+      sortBy = "created_at",
+      sortOrder = "DESC", 
+      page = 1,
+      limit = 10,
+    } = req.query;
 
     const where = {};
 
     if (search) {
       where.name = { [Op.like]: `%${search}%` };
     }
+
     if (category_id) {
-      where.category_id = category_id;
+      const categoryIds = category_id.split(",").map((id) => parseInt(id.trim()));
+      where.category_id = { [Op.in]: categoryIds };
     }
+
     if (location) {
       where.location = { [Op.like]: `%${location}%` };
     }
+
     if (minRating) {
       where.rating = { [Op.gte]: parseFloat(minRating) };
     }
+
+    const validSortFields = {
+      rating: "rating",
+      name: "name",
+      reviews: "review_count",
+    };
+    const sortField = validSortFields[sortBy] || "created_at";
 
     const offset = (page - 1) * limit;
 
@@ -29,7 +49,7 @@ const getBusinessesController = async (req, res) => {
       include: [{ model: Category, attributes: ["name"] }],
       limit: parseInt(limit),
       offset: parseInt(offset),
-      order: [["created_at", "DESC"]],
+      order: [[sortField, sortOrder.toUpperCase()]],
     });
 
     res.status(200).send({
