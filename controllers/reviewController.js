@@ -93,7 +93,7 @@ const getUserReviewsController = async (req, res) => {
 
     const { count, rows } = await Review.findAndCountAll({
       where: { user_id: userId },
-      include: [{ model: Business, attributes: ["id", "name", "logo_url"] }],
+      include: [{ model: Business, attributes: ["id", "name", "logo_url", "website_url"] }],
       limit: parseInt(limit),
       offset: parseInt(offset),
       order: [["created_at", "DESC"]],
@@ -123,7 +123,7 @@ const updateReviewController = async (req, res) => {
       return res.status(404).json({ success: false, message: "Review not found." });
     }
 
-    if (review.user_id !== req.user.id) {
+    if (review.user_id !== req.body.userId) {
       return res.status(403).json({ success: false, message: "You can only edit your own reviews." });
     }
 
@@ -152,7 +152,7 @@ const deleteReviewController = async (req, res) => {
       return res.status(404).json({ success: false, message: "Review not found." });
     }
 
-    if (review.user_id !== req.user.id) {
+    if (review.user_id !== req.body.userId) {
       return res.status(403).json({ success: false, message: "You can only delete your own reviews." });
     }
 
