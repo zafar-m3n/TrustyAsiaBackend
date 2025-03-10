@@ -18,7 +18,7 @@ const getAllReviews = async (req, res) => {
     const { count, rows } = await Review.findAndCountAll({
       where: whereCondition,
       include: [
-        { model: Business, attributes: ["id", "name", "logo_url"] },
+        { model: Business, attributes: ["id", "name", "logo_url", "website_url"] },
         { model: User, attributes: ["id", "name", "email"] },
       ],
       limit: parseInt(limit),
