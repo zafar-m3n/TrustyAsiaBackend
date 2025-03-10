@@ -35,6 +35,7 @@ const registerController = async (req, res) => {
       email: newUser.email,
       created_at: newUser.created_at,
       profile_image: newUser.profile_image,
+      role: newUser.role,
     };
 
     res.status(201).send({
@@ -89,6 +90,7 @@ const loginController = async (req, res) => {
         email: user.email,
         created_at: user.created_at,
         profile_image: user.profile_image,
+        role: user.role,
       },
     });
   } catch (error) {
@@ -122,6 +124,7 @@ const authController = async (req, res) => {
         email: user.email,
         created_at: user.created_at,
         profile_image: user.profile_image,
+        role: user.role,
       },
     });
   } catch (error) {
