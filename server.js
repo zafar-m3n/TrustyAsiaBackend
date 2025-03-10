@@ -26,6 +26,7 @@ app.use(cors());
 app.use("/api/v1/auth", require("./routes/authRoutes"));
 app.use("/api/v1/businesses", require("./routes/businessRoutes"));
 app.use("/api/v1/reviews", require("./routes/reviewRoutes"));
+app.use("/api/v1/admin/users", require("./routes/admin/userRoutes"));
 
 // Routes
 app.get("/", (req, res) => {
