@@ -29,10 +29,10 @@ passport.use(
         });
 
         console.log("New user created", user.email);
-        // return done(null, user);
+        return done(null, user);
       } catch (err) {
         console.log("Cannot retrieve profile", err);
-        // return done(err, null);
+        return done(err, null);
       }
     }
   )
