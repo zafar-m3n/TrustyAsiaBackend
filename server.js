@@ -26,8 +26,10 @@ app.use(morgan("dev"));
 
 app.use(
   cors({
-    origin: process.env.NODE_TRUSTYASIA_FRONTEND_URL || "http://localhost:5173",
-    credentials: true, 
+    origin: ["https://trustyasia.com", "http://localhost:5173"],
+    credentials: true,
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
